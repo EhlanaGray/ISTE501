@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IST API</title>
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script type="text/javascript">
+//array for faculty usernames..will use username to pull specific data
+var fac_usernames = [];
+//array for staff usernames..will use usernames to pull specific data
+var staff_usernames = [];
+
+$(document).ready(function(){
+	//http://ist.rit.edu/~istdev/api
+
+	$.ajax({
+		type:'get',
+		async:false,
+		cache:false,
+		url:'proxy.php',
+		dataType:'json',
+		data:{path:'/people'},
+		success:function(data){
+			
+			var fac = data.faculty;
+			var staff = data.staff;
+			
+			
+			//loop through all faculty members
+			for (var i=0;i<fac.length;++i){
+				console.log(fac[i].username);
+				fac_usernames.push(fac[i].username);
+				
+			}
+			//loop through all staff members
+			for (var i=0;i<staff.length;++i){
+				
+				staff_usernames.push(staff[i].username);
+				
+			}
+			console.log(data);
+			
+			//var len =  data.results.length;
+        	//for(var i=0;i<len;i++ ){
+            //	console.log(data.results[i]);
+        	//}
+			getFacultyInfo(fac_usernames[0]);
+			//$( "#content" ).html( "<strong>HEY</strong>" );
+			
+		},
+		error:err
+	});
+});
+
+function err(event){
+		console.log(event);	
+	}
+	
+	
+	function getFacultyInfo(username){
+		
+	$.ajax({
+		type:'get',
+		async:false,
+		cache:false,
+		url:'proxy.php',
+		dataType:'json',
+		data:{path:'/people/faculty/username='+username},
+		success:function(data){
+			
+			var table = '<table><hr> <th>Name</th> <th>Office</th> <th>Department</th> </hr>';
+			table+='<tr><td>'+data.name+'</td>';
+			table+='<td>'+data.office+'</td>';
+			table+='<td>IST</td></tr>';
+			console.log(table);
+			$('#content').append(table+'</table>');
+			
+		},
+		error:err
+	});
+		
+	
+	}
+	
+	
+	
+	
+	
+	//getFaculty();
+	
+	//getFacultyInfo(fac_usernames[0]);
+</script>
+
+</head>
+<body onload=>
+	<div id="content" style="color:black"> <h1> content from api call:</h1> 
+	
+	 </div>
+
+</body>
+</html>
